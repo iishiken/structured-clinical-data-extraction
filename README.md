@@ -17,7 +17,7 @@ git clone https://github.com/iishiken/structured-clinical-data-extraction
 ```
 Set up a clean python3 virtual environment, i.e.
 ```bash
-conda create -n structured-clinical-data-extraction python=3.11
+conda create -n structured-clinical-data-extraction python=3.12
 conda activate structured-clinical-data-extraction
 ```
 
@@ -29,25 +29,12 @@ pip install -r requirements.txt
 
 ### LLM Server Configuration
 
-This project assumes the use of the following endpoints:
+This project assumes the use of the following LLM server:
 
-1. vLLM Local Server:
-```python
-base_url="http://localhost:8000/v1"
-```
-For vLLM server configuration and startup instructions, please refer to the [vLLM official documentation](https://docs.vllm.ai/).
+1. vLLM Local Server: Please refer to the [vLLM official documentation](https://docs.vllm.ai/).
 
-2. Google Gemini API:
-```python
-base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
-```
-To use Gemini, you need a Google Cloud API key. Set it as an environment variable:
-```bash
-export GOOGLE_API_KEY="your-api-key"
-```
+2. Google Gemini: See [Google Cloud Platform setup guide](https://cloud.google.com/vertex-ai/docs/start/cloud-environment)
 
-
-別のエンドポイントを使用する場合は、`pTN_extract.py`の設定を適宜変更してください。
 
 ## Project Structure
 
@@ -122,7 +109,7 @@ ID,report
 2,"Report text..."
 ```
 
-## 出力
+## Output
 
 The structured TNM classification data is output as `output.csv`. Each record is saved in the following format:
 
