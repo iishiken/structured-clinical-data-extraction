@@ -27,22 +27,21 @@ cd structured-clinical-data-extraction
 pip install -r requirements.txt
 ```
 
-### LLMサーバーの設定
+### LLM Server Configuration
 
-このプロジェクトでは、以下のエンドポイントを使用することを想定しています：
+This project assumes the use of the following endpoints:
 
-1. vLLMローカルサーバー:
+1. vLLM Local Server:
 ```python
 base_url="http://localhost:8000/v1"
 ```
-vLLMサーバーの設定と起動方法については、[vLLMの公式ドキュメント](https://docs.vllm.ai/)を参照してください。
+For vLLM server configuration and startup instructions, please refer to the [vLLM official documentation](https://docs.vllm.ai/).
 
 2. Google Gemini API:
 ```python
 base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
 ```
-
-Geminiを使用する場合は、Google Cloud APIキーが必要です。環境変数として設定してください：
+To use Gemini, you need a Google Cloud API key. Set it as an environment variable:
 ```bash
 export GOOGLE_API_KEY="your-api-key"
 ```
@@ -50,36 +49,36 @@ export GOOGLE_API_KEY="your-api-key"
 
 別のエンドポイントを使用する場合は、`pTN_extract.py`の設定を適宜変更してください。
 
-## プロジェクト構造
+## Project Structure
 
 ```
 .
-├── pTN_extract.py      # pTN分類抽出スクリプト
-├── cM_assessment.py    # cM分類判定スクリプト
-├── requirements.txt    # 依存パッケージ
-├── data/              # データディレクトリ
-│   └── input.csv      # 入力データ例
-├── output.csv         # 出力結果
-└── prompts/           # プロンプトファイルディレクトリ
-    ├── pTN_prompt_english.txt    # pTN分類抽出用プロンプト（英語）
-    ├── pTN_prompt_japanease.txt  # pTN分類抽出用プロンプト（日本語）
-    ├── cM_prompt_english.txt     # cM判定用プロンプト（英語）
-    └── cM_prompt_japanease.txt   # cM判定用プロンプト（日本語）
+├── pTN_extract.py      # Script for pTN classification extraction
+├── cM_assessment.py    # Script for cM classification assessment
+├── requirements.txt    # Package dependencies
+├── data/              # Data directory
+│   └── input.csv      # Input data example
+├── output.csv         # Output results
+└── prompts/           # Prompt files directory
+    ├── pTN_prompt_english.txt    # Prompt for pTN classification extraction (English)
+    ├── pTN_prompt_japanease.txt  # Prompt for pTN classification extraction (Japanese)
+    ├── cM_prompt_english.txt     # Prompt for cM assessment (English)
+    └── cM_prompt_japanease.txt   # Prompt for cM assessment (Japanese)
 ```
 
-## 使用方法
+## Usage
 
-1. 入力CSVファイルを`data/`ディレクトリに配置
-   - 必須列: `ID`, `report`
-   - エンコーディング: UTF-8
+1. Place input CSV file in the `data/` directory
+   - Required columns: `ID`, `report`
+   - Encoding: UTF-8
 
-2. プロンプトファイルを`prompts/`ディレクトリに配置
-   - 英語版プロンプト: `prompts/pTN_prompt_english.txt`, `prompts/cM_prompt_english.txt`
-   - 日本語版プロンプト: `prompts/pTN_prompt_japanease.txt`, `prompts/cM_prompt_japanease.txt`
+2. Place prompt files in the `prompts/` directory
+   - English prompts: `prompts/pTN_prompt_english.txt`, `prompts/cM_prompt_english.txt`
+   - Japanese prompts: `prompts/pTN_prompt_japanease.txt`, `prompts/cM_prompt_japanease.txt`
 
-3. スクリプトを実行:
+3. Run the script:
 ```bash
-# モデル名とプロンプトファイルを指定して実行
+# Specify model name and prompt file to run
 python pTN_extract.py --model "Qwen/Qwen2.5-72B-Instruct-GPTQ-Int4" --prompt "prompts/pTN_prompt_english.txt"
 python pTN_extract.py --model "gemini-1.5-pro-001" --prompt "prompts/pTN_prompt_english.txt"
 
@@ -88,9 +87,9 @@ python cM_assessment.py --model "gemini-1.5-pro-001" --prompt "prompts/cM_prompt
 
 ```
 
-### 論文で使用したモデル
+### Models Used in the Paper
 
-以下のモデルで評価を実施しています（全てHugging Faceからダウンロード）：
+The following models were evaluated (all downloaded from Hugging Face):
 
 - Qwen family
   - `Qwen/Qwen2.5-32B-Instruct-GPTQ-Int4`
@@ -105,48 +104,47 @@ python cM_assessment.py --model "gemini-1.5-pro-001" --prompt "prompts/cM_prompt
 
 - Gemma family
   - `shuyuej/gemma-2-27b-it-GPTQ`
+All these models were downloaded and used from the [Hugging Face](https://huggingface.co/).
 
-これらのモデルは全て[Hugging Face](https://huggingface.co/)のモデルハブからダウンロードして使用しています。
+### Command Line Arguments
 
-### コマンドライン引数
+- `--model`: Model name to use (default: Qwen/Qwen2.5-72B-Instruct-GPTQ-Int4)
+- `--prompt`: Path to prompt file (default: prompts/sample_prompt.txt)
+- `--input`: Path to input CSV file (default: data/input.csv)
 
-- `--model`: 使用するモデル名（デフォルト: Qwen/Qwen2.5-72B-Instruct-GPTQ-Int4）
-- `--prompt`: プロンプトファイルのパス（デフォルト: prompts/sample_prompt.txt）
-- `--input`: 入力CSVファイルのパス（デフォルト: data/input.csv）
+## Input Data Format
 
-## 入力データ形式
-
-入力CSVファイル（`data/input.csv`）は以下の形式である必要があります：
+The input CSV file (`data/input.csv`) must be in the following format:
 
 ```csv
 ID,report
-1,"病理レポート本文..."
-2,"病理レポート本文..."
+1,"Report text..."
+2,"Report text..."
 ```
 
 ## 出力
 
-構造化されたTNM分類データは`output.csv`として出力されます。各レコードは以下の形式で保存されます：
+The structured TNM classification data is output as `output.csv`. Each record is saved in the following format:
 
 ```csv
 id,tn_info
-1,"[{\"T\": \"pT2\", \"N\": \"pN1\"}]"
-2,"[{\"T\": \"pT3\", \"N\": \"pN0\"}]"
+1,"[{"T": "pT2", "N": "pN1"}]"
+2,"[{"T": "pT3", "N": "pN0"}]"
 ```
 
-- `id`: 入力データのID
-- `tn_info`: JSON形式の文字列で、T分類とN分類もしくはM分類の情報を含む
+- `id`: Input data ID
+- `tn_info`: JSON formatted string containing T and N classification or M classification information
 
-## プロンプト
+## Prompts
 
-`prompts/`ディレクトリには、論文で使用した以下のプロンプトを収録しています：
+The `prompts/` directory contains the following prompts used in the paper:
 
-### pTN分類抽出用プロンプト
-- `pTN_prompt_english.txt`: 病理学的TNM分類を抽出するための英語プロンプト
-- `pTN_prompt_japanease.txt`: 病理学的TNM分類を抽出するための日本語プロンプト
+### Prompts for pTN Classification Extraction
+- `pTN_prompt_english.txt`: English prompt for extracting pathological TNM classification
+- `pTN_prompt_japanease.txt`: Japanese prompt for extracting pathological TNM classification
 
-### cM判定用プロンプト
-- `cM_prompt_english.txt`: 臨床的遠隔転移（cM）を判定するための英語プロンプト
-- `cM_prompt_japanease.txt`: 臨床的遠隔転移（cM）を判定するための日本語プロンプト
+### Prompts for cM Assessment
+- `cM_prompt_english.txt`: English prompt for assessing clinical distant metastasis (cM)
+- `cM_prompt_japanease.txt`: Japanese prompt for assessing clinical distant metastasis (cM)
 
-これらのプロンプトは、病理レポートからTNM分類を抽出・判定するために最適化されています。
+These prompts are optimized for extracting and assessing TNM classification from pathology reports.
